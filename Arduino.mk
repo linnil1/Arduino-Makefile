@@ -483,6 +483,8 @@ ifndef ARDUINO_PLATFORM_LIB_PATH
         $(call show_config_variable,ARDUINO_PLATFORM_LIB_PATH,[COMPUTED],(from ARDUINO_DIR))
     endif
 else
+	#convert ~ to /home/yourname 
+	ARDUINO_PLATFORM_LIB_PATH:= $(strip $(wildcard $(ARDUINO_PLATFORM_LIB_PATH)))
     $(call show_config_variable,ARDUINO_PLATFORM_LIB_PATH,[USER])
 endif
 
@@ -538,6 +540,8 @@ ifndef USER_LIB_PATH
     USER_LIB_PATH = $(ARDUINO_SKETCHBOOK)/libraries
     $(call show_config_variable,USER_LIB_PATH,[DEFAULT],(in user sketchbook))
 else
+	#convert ~ to /home/yourname 
+	USER_LIB_PATH  := $(strip $(wildcard $(USER_LIB_PATH)))
     $(call show_config_variable,USER_LIB_PATH,[USER])
 endif
 
@@ -944,7 +948,6 @@ ifdef ARDUINO_PLATFORM_LIB_PATH
     PLATFORM_LIB_NAMES  := $(patsubst $(ARDUINO_PLATFORM_LIB_PATH)/%,%,$(PLATFORM_LIBS))
 endif
 
-
 # Error here if any are missing.
 LIBS_NOT_FOUND = $(filter-out $(USER_LIB_NAMES) $(SYS_LIB_NAMES) $(PLATFORM_LIB_NAMES),$(ARDUINO_LIBS))
 ifneq (,$(strip $(LIBS_NOT_FOUND)))
@@ -1154,39 +1157,39 @@ $(call show_separator)
 # library sources
 $(OBJDIR)/libs/%.c.o: $(ARDUINO_LIB_PATH)/%.c
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/libs/%.cpp.o: $(ARDUINO_LIB_PATH)/%.cpp
 	@$(MKDIR) $(dir $@)
-	$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	@$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(OBJDIR)/libs/%.S.o: $(ARDUINO_LIB_PATH)/%.S
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
 
 $(OBJDIR)/platformlibs/%.c.o: $(ARDUINO_PLATFORM_LIB_PATH)/%.c
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/platformlibs/%.cpp.o: $(ARDUINO_PLATFORM_LIB_PATH)/%.cpp
 	@$(MKDIR) $(dir $@)
-	$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	@$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(OBJDIR)/platformlibs/%.S.o: $(ARDUINO_PLATFORM_LIB_PATH)/%.S
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
 
 $(OBJDIR)/userlibs/%.cpp.o: $(USER_LIB_PATH)/%.cpp
 	@$(MKDIR) $(dir $@)
-	$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	@$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(OBJDIR)/userlibs/%.c.o: $(USER_LIB_PATH)/%.c
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/userlibs/%.S.o: $(USER_LIB_PATH)/%.S
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
 
 ifdef COMMON_DEPS
     COMMON_DEPS := $(COMMON_DEPS) $(MAKEFILE_LIST)
@@ -1197,23 +1200,23 @@ endif
 # normal local sources
 $(OBJDIR)/%.c.o: %.c $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.cc.o: %.cc $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	@$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(OBJDIR)/%.cpp.o: %.cpp $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	@$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(OBJDIR)/%.S.o: %.S $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
 
 $(OBJDIR)/%.s.o: %.s $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CC) -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
+	@$(CC) -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
 
 # the pde -> o file
 $(OBJDIR)/%.pde.o: %.pde $(COMMON_DEPS) | $(OBJDIR)
@@ -1241,15 +1244,15 @@ $(OBJDIR)/%.s: %.cpp $(COMMON_DEPS) | $(OBJDIR)
 # core files
 $(OBJDIR)/core/%.c.o: $(ARDUINO_CORE_PATH)/%.c $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/core/%.cpp.o: $(ARDUINO_CORE_PATH)/%.cpp $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	@$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(OBJDIR)/core/%.S.o: $(ARDUINO_CORE_PATH)/%.S $(COMMON_DEPS) | $(OBJDIR)
 	@$(MKDIR) $(dir $@)
-	$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
+	@$(CC) -MMD -c $(CPPFLAGS) $(ASFLAGS) $< -o $@
 
 # various object conversions
 $(OBJDIR)/%.hex: $(OBJDIR)/%.elf $(COMMON_DEPS)
@@ -1288,8 +1291,9 @@ endif
 # Default avrdude options
 # -V Do not verify
 # -q - suppress progress output
+# -D Disable auto erase for flash.
 ifndef AVRDUDE_OPTS
-    AVRDUDE_OPTS = -q -V
+    AVRDUDE_OPTS = -q -V -D
 endif
 
 # Decouple the mcu between the compiler options (-mmcu) and the avrdude options (-p).
@@ -1308,7 +1312,7 @@ endif
 # -D - Disable auto erase for flash memory
 # Note: -D is needed for Mega boards.
 #       (See https://github.com/sudar/Arduino-Makefile/issues/114#issuecomment-25011005)
-AVRDUDE_ARD_OPTS = -D -c $(AVRDUDE_ARD_PROGRAMMER) -b $(AVRDUDE_ARD_BAUDRATE) -P
+AVRDUDE_ARD_OPTS = -c $(AVRDUDE_ARD_PROGRAMMER) -b $(AVRDUDE_ARD_BAUDRATE) -P
 ifeq ($(CURRENT_OS), WINDOWS)
     # get_monitor_port checks to see if the monitor port exists, assuming it is
     # a file. In Windows, avrdude needs the port in the format 'com1' which is
